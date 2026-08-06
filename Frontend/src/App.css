@@ -1,17 +1,17 @@
 
-.create-but{
+.create-btn{
   background-color: orangered;
   border-color: orangered;
   width: 374px;
   padding: 15px;
 }
-.login-but{
+.login-btn{
   background-color: green;
   border-color: green;
   width: 374px;
    padding: 12px;
 }
-.lagout-btn{
+.logout-btn{
   background-color: red;
   border-color: red;
   width: 200px;
@@ -20,7 +20,7 @@
 }
 
 @media (max-width: 600px) {
-  .create-but, .login-but, .lagout-btn {
+  .create-btn, .login-btn, .logout-btn {
    width: 320px;
    
   }

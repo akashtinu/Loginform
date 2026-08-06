@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -68,7 +69,7 @@ function App() {
         <h1>Welcome {loggedUser}</h1>
         <p>You logged in successfully.</p>
 
-        <button onClick={() => setLoggedUser(null)}>
+        <button className="logout-btn" onClick={() => setLoggedUser(null)}>
           Logout
         </button>
       </div>
@@ -122,12 +123,13 @@ function App() {
           style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
         />
 
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>
+        <button  className="login-btm" type="submit" style={{ width: "100%", padding: "10px" }}>
           {isLogin ? "Login" : "Register"}
         </button>
       </form>
 
       <button
+      className="create-btn"
         onClick={() => {
           setIsLogin(!isLogin);
           setMessage("");
