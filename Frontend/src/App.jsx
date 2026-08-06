@@ -123,7 +123,7 @@ function App() {
           style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
         />
 
-        <button  className="login-btm" type="submit" style={{ width: "100%", padding: "10px" }}>
+        <button  className="login-btn" type="submit" style={{ width: "100%", padding: "10px" }}>
           {isLogin ? "Login" : "Register"}
         </button>
       </form>
