@@ -1,7 +1,9 @@
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 
@@ -9,18 +11,21 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "tinu",
-  database: "login_app"
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: process.env.DB_SSL === "true" ? { minVersion: "TLSv1.2" } : undefined
 });
 
 db.connect((err) => {
   if (err) {
-    console.log("MySQL connection failed:", err);
-  } else {
-    console.log("MySQL connected");
+    console.log("MySQL connection failed:", err.message);
+    return;
   }
+
+  console.log("MySQL connected");
 });
 
 app.get("/", (req, res) => {
@@ -34,21 +39,29 @@ app.post("/register", async (req, res) => {
     return res.json({ success: false, message: "All fields are required" });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
-  db.query(sql, [name, email, hashedPassword], (err) => {
-    if (err) {
-      return res.json({ success: false, message: "Email already exists" });
-    }
+    db.query(sql, [name, email, hashedPassword], (err) => {
+      if (err) {
+        return res.json({ success: false, message: "Email already exists" });
+      }
 
-    res.json({ success: true, message: "Register successful" });
-  });
+      res.json({ success: true, message: "Register successful. Now login." });
+    });
+  } catch (error) {
+    res.json({ success: false, message: "Server error" });
+  }
 });
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.json({ success: false, message: "Email and password required" });
+  }
 
   const sql = "SELECT * FROM users WHERE email = ?";
 
@@ -74,21 +87,6 @@ app.post("/login", (req, res) => {
       name: user.name
     });
   });
-});
-
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
-});
-
-require("dotenv").config();
-
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: process.env.DB_SSL === "true" ? { minVersion: "TLSv1.2" } : undefined
 });
 
 const PORT = process.env.PORT || 5000;

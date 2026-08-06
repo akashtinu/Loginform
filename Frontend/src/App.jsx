@@ -1,9 +1,12 @@
 import { useState } from "react";
-import "./App.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [isLogin, setIsLogin] = useState(true);
   const [loggedUser, setLoggedUser] = useState(null);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,50 +22,53 @@ function App() {
     e.preventDefault();
 
     const url = isLogin
-      ? "http://localhost:5000/login"
-      : "http://localhost:5000/register";
+      ? `${API_URL}/login`
+      : `${API_URL}/register`;
 
     const formData = isLogin
       ? { email, password }
       : { name, email, password };
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success && isLogin) {
-      setLoggedUser(data.name);
-      clearForm();
-      return;
+      if (data.success && isLogin) {
+        setLoggedUser(data.name);
+        clearForm();
+        return;
+      }
+
+      if (data.success && !isLogin) {
+        setMessage(data.message);
+        setMessageType("success");
+        setIsLogin(true);
+        clearForm();
+        return;
+      }
+
+      setMessage(data.message);
+      setMessageType("error");
+    } catch (error) {
+      setMessage("Backend connection failed");
+      setMessageType("error");
     }
-
-    if (data.success && !isLogin) {
-      alert("Register successful. Now login.");
-      setIsLogin(true);
-      clearForm();
-      return;
-    }
-
-    alert(data.message);
   };
 
   if (loggedUser) {
     return (
       <div style={{ width: "400px", margin: "100px auto", fontFamily: "Arial" }}>
-        
         <h1>Welcome {loggedUser}</h1>
         <p>You logged in successfully.</p>
 
-        <button
-        className="lagout-btn"
-        
-         onClick={() => setLoggedUser(null)}>
+        <button onClick={() => setLoggedUser(null)}>
           Logout
         </button>
       </div>
@@ -72,6 +78,19 @@ function App() {
   return (
     <div style={{ width: "350px", margin: "80px auto", fontFamily: "Arial" }}>
       <h2>{isLogin ? "Login" : "Register"}</h2>
+
+      {message && (
+        <div
+          style={{
+            padding: "10px",
+            marginBottom: "10px",
+            color: messageType === "success" ? "green" : "red",
+            background: messageType === "success" ? "#e8ffe8" : "#ffe8e8"
+          }}
+        >
+          {message}
+        </div>
+      )}
 
       <form onSubmit={submitForm}>
         {!isLogin && (
@@ -103,20 +122,18 @@ function App() {
           style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
         />
 
-        <button 
-        className="login-but"
-        type="submit">
+        <button type="submit" style={{ width: "100%", padding: "10px" }}>
           {isLogin ? "Login" : "Register"}
         </button>
       </form>
 
-      <button 
-      className="create-but"
+      <button
         onClick={() => {
           setIsLogin(!isLogin);
+          setMessage("");
           clearForm();
         }}
-        style={{  marginTop: "10px" }}
+        style={{ width: "100%", padding: "10px", marginTop: "10px" }}
       >
         {isLogin ? "Create Account" : "Already have account? Login"}
       </button>
