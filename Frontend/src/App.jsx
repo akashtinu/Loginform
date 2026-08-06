@@ -95,7 +95,8 @@ function App() {
 
       <form onSubmit={submitForm}>
         {!isLogin && (
-          <input
+          <input 
+          className="input-bar"
             type="text"
             placeholder="Name"
             value={name}
@@ -106,6 +107,7 @@ function App() {
         )}
 
         <input
+        className="input-bar"
           type="email"
           placeholder="Email"
           value={email}
@@ -115,6 +117,7 @@ function App() {
         />
 
         <input
+        className="input-bar"
           type="password"
           placeholder="Password"
           value={password}

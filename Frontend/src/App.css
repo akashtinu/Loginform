@@ -20,7 +20,7 @@
 }
 
 @media (max-width: 600px) {
-  .create-btn, .login-btn, .logout-btn {
+  .create-btn, .login-btn, .logout-btn,.input-bar{
    width: 320px;
    
   }
