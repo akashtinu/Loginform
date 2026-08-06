@@ -1,0 +1,27 @@
+
+.create-but{
+  background-color: orangered;
+  border-color: orangered;
+  width: 374px;
+  padding: 15px;
+}
+.login-but{
+  background-color: green;
+  border-color: green;
+  width: 374px;
+   padding: 12px;
+}
+.lagout-btn{
+  background-color: red;
+  border-color: red;
+  width: 200px;
+   padding: 12px;
+   margin-top: 50px;
+}
+
+@media (max-width: 600px) {
+  .create-but, .login-but, .lagout-btn {
+   width: 320px;
+   
+  }
+}
